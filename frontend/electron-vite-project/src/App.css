@@ -1,0 +1,69 @@
+/* src/App.css (最终正确版) */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background-color: #1e1e1e;
+}
+
+.app-layout {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 250px; /* 左侧边栏可以窄一点 */
+  background-color: #252526;
+  border-right: 1px solid #333333;
+  padding: 15px;
+  box-sizing: border-box;
+  color: #cccccc;
+  /* 添加 flex-shrink: 0 防止它被压缩 */
+  flex-shrink: 0; 
+}
+
+.canvas-wrapper {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+/* 新增：右侧属性面板的样式 */
+.properties-panel {
+  width: 350px; /* 给属性面板一个固定宽度 */
+  background-color: #252526;
+  border-left: 1px solid #333333;
+  padding: 15px;
+  box-sizing: border-box;
+  color: #cccccc;
+  /* 添加 flex-shrink: 0 防止它被压缩 */
+  flex-shrink: 0;
+}
+
+.properties-panel h3 {
+  margin-top: 0;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
+}
+
+.canvas-wrapper {
+  flex-grow: 1;
+  /* 确保它在 flex 容器中可见 */
+  min-width: 0;
+}
+
+.add-node-btn {
+  margin-top: 15px;
+  padding: 8px 12px;
+  font-size: 14px;
+  background-color: #007acc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.add-node-btn:hover {
+  background-color: #005f9e;
+}
