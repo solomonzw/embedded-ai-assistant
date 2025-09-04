@@ -67,3 +67,9 @@ body {
 .add-node-btn:hover {
   background-color: #005f9e;
 }
+.properties-panel label {
+  display: block;
+  margin-top: 15px;
+  font-size: 12px;
+  color: #aaa;
+}
