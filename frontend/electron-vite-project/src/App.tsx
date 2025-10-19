@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, MouseEvent as ReactMouseEvent } from 'react';
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -6,9 +6,7 @@ import ReactFlow, {
   Connection,
   useReactFlow,
   Node,
-  NodeDoubleClickHandleFunc,
-  NodeMouseHandler,
-  PaneMouseHandler
+  NodeMouseHandler
 } from 'reactflow';
 
 // 1. 导入我们的自定义节点组件
@@ -16,6 +14,13 @@ import EditableNode from './EditableNode';
 
 import 'reactflow/dist/style.css';
 import './App.css';
+
+type NodeDataType = {
+  label: string;
+  code?: string;
+  onLabelChange: (newLabel: string) => void;
+  isEditing?: boolean;
+};
 
 let nodeId = 0;
 
@@ -33,7 +38,7 @@ function App() {
   }, []);
 
   // 当单击画布背景时，取消选中
-  const onPaneClick: PaneMouseHandler = useCallback(() => {
+  const onPaneClick: (event: ReactMouseEvent) => void = useCallback(() => {
     setSelectedNodeId(null);
     console.log('背景被单击，取消选中'); // 添加日志，用于调试
   }, []);
@@ -44,13 +49,13 @@ function App() {
 
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
-  // 更新特定节点标签的函数
-  const updateNodeData = useCallback((nodeId: string, newData: any) => {
+  // 更新特定节点数据的函数
+  const updateNodeData = useCallback((nodeId: string, newData: Partial<NodeDataType>) => {
     setNodes((currentNodes) =>
       currentNodes.map((node) => {
         if (node.id === nodeId) {
           // 将新数据与旧数据合并，实现更新
-          const updatedData = { ...node.data, ...newData };
+          const updatedData = { ...node.data, ...newData } as NodeDataType;
           return { ...node, data: updatedData };
         }
         return node;
@@ -60,7 +65,7 @@ function App() {
 
   const addNewNode = useCallback(() => {
     const newNodeId = `node_${++nodeId}`;
-    const newNode: Node = {
+    const newNode: Node<NodeDataType> = {
       id: newNodeId,
       position: { x: Math.random() * 200, y: Math.random() * 200 },
       type: 'editable', 
@@ -78,7 +83,7 @@ function App() {
   }, [setNodes, fitView, updateNodeData]);
 
   // 4. 双击时，不再弹窗，而是切换节点的 isEditing 状态
-  const onNodeDoubleClick: NodeDoubleClickHandleFunc = useCallback((event, clickedNode) => {
+  const onNodeDoubleClick: NodeMouseHandler = useCallback((event, clickedNode) => {
     setNodes((currentNodes) =>
       currentNodes.map((node) => {
         if (node.id === clickedNode.id) {
