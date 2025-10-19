@@ -1,6 +1,6 @@
 // src/EditableNode.tsx
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
 
 // onLabelChange 是一个函数，当标签更新时我们会调用它
@@ -12,7 +12,7 @@ type NodeData = {
 };
 
 // 我们自定义的节点组件
-function EditableNode({ id, data }: NodeProps<NodeData>) {
+function EditableNode({ data }: NodeProps<NodeData>) {
   const [inputValue, setInputValue] = useState(data.label);
 
   // 当外部的 data.label 变化时，同步更新内部的 inputValue
