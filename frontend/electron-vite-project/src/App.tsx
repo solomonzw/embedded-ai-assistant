@@ -6,7 +6,6 @@ import ReactFlow, {
   Connection,
   useReactFlow,
   Node,
-  NodeDoubleClickHandleFunc,
   NodeMouseHandler,
   PaneMouseHandler
 } from 'reactflow';
@@ -17,10 +16,17 @@ import EditableNode from './EditableNode';
 import 'reactflow/dist/style.css';
 import './App.css';
 
+type NodeData = {
+  label: string;
+  code?: string;
+  onLabelChange: (newLabel: string) => void;
+  isEditing?: boolean;
+};
+
 let nodeId = 0;
 
 function App() {
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { fitView } = useReactFlow();
     // 创建一个新状态来存储被选中节点的ID，初始值为null（未选中）
@@ -45,12 +51,12 @@ function App() {
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
   // 更新特定节点标签的函数
-  const updateNodeData = useCallback((nodeId: string, newData: any) => {
+  const updateNodeData = useCallback((nodeId: string, newData: Partial<NodeData>) => {
     setNodes((currentNodes) =>
       currentNodes.map((node) => {
         if (node.id === nodeId) {
           // 将新数据与旧数据合并，实现更新
-          const updatedData = { ...node.data, ...newData };
+          const updatedData = { ...node.data, ...newData } as NodeData;
           return { ...node, data: updatedData };
         }
         return node;
@@ -60,7 +66,7 @@ function App() {
 
   const addNewNode = useCallback(() => {
     const newNodeId = `node_${++nodeId}`;
-    const newNode: Node = {
+    const newNode: Node<NodeData> = {
       id: newNodeId,
       position: { x: Math.random() * 200, y: Math.random() * 200 },
       type: 'editable', 
@@ -78,7 +84,7 @@ function App() {
   }, [setNodes, fitView, updateNodeData]);
 
   // 4. 双击时，不再弹窗，而是切换节点的 isEditing 状态
-  const onNodeDoubleClick: NodeDoubleClickHandleFunc = useCallback((event, clickedNode) => {
+  const onNodeDoubleClick: NodeMouseHandler = useCallback((event, clickedNode) => {
     setNodes((currentNodes) =>
       currentNodes.map((node) => {
         if (node.id === clickedNode.id) {
